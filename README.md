@@ -124,7 +124,9 @@ adkを使ったエージェントのフォルダ構成例は以下の通り。
  │    │    └── ...
  │    ├── .env　# 環境変数ファイル
  │    ├──  agent.py　# エージェント定義ファイル
- │    └── tools.py　# ツール定義ファイル
+ │    └── tools/　# ツール定義ファイル
+ │         ├── {tool1}.py
+ │         └── ...
  ├── project.toml　# uvのプロジェクト設定ファイル
  └── .venv/　# uvの仮想環境フォルダ
 ```
@@ -151,6 +153,9 @@ root_agent = LlmAgent(
 > The LlmAgent (often aliased simply as Agent) 
 https://google.github.io/adk-docs/agents/llm-agents/
 
+並列に実行したいエージェントは、ParallelAgentクラスをインスタンス化したり、
+順番に実行したいエージェントは、SequentialAgentクラスをインスタンス化したりします。
+
 
 #### tools.py
 tools.pyにはエージェントが使用するtoolを定義します。
@@ -161,6 +166,9 @@ toolの書き方として、２つの方法があります。
 2. 自分で関数を定義した、Custom toolsを作成する
 
 https://google.github.io/adk-docs/tools/
+
+カスタムtoolの場合は、FunctionToolを用いて、関数を定義します。
+そのまま、pythonで定義して、エージェントに渡すこともできましたが、お作法として使用しています。
 
 ### エージェントの実行
 
