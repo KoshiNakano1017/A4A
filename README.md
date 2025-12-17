@@ -1,4 +1,5 @@
 # A4A
+![alt text](assets/a4a.png)
 エージェントを作るためのエージェント(agent for agent)です。
 略してA4Aと呼びます。
 
