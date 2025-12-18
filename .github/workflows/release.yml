@@ -11,6 +11,8 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -43,7 +45,7 @@ jobs:
 
       - name: Generate AI Summary
         id: ai_summary
-        if: ${{ secrets.GEMINI_API_KEY != '' }}
+        if: env.GEMINI_API_KEY != ''
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
