@@ -82,8 +82,20 @@ jobs:
           import os, json, http.client
           api_key = os.getenv('GEMINI_API_KEY')
           content = os.getenv('CONTENT_LIST')
-          prompt = f'Following is a list of changes (Pull Requests or Commits). Please write a concise, friendly, and professional "What\'s New" summary for release notes in Japanese. Focus on the value to the user. Keep it under 5 bullet points.\n\n{content}'
+          prompt = f"""
+          以下は変更一覧（Pull Request / Commit）です。日本語で、リリースノート向けの「What's New」を作成してください。
 
+          # 出力ルール（厳守）
+          - 出力は箇条書き（- で始まる行）のみ。前置き、見出し、理由、注釈、選定理由、謝罪文、区切り線（---）は禁止。
+          - 最大5項目。各項目は1文で簡潔に。
+          - ユーザー価値に焦点。ただし、変更一覧から根拠なく推測しない（例：「安定性向上」「パフォーマンス改善」など一般化も、根拠がなければ書かない）。
+          - 変更内容が不明瞭な場合は「内部改善（詳細なし）」のように正直に書く。
+          - 記号や改行は通常のテキストとして出力（URLエンコードしない）。
+          - かしこまりました等は不要で、リリースノートの文章のみ出力して。
+
+          # 変更一覧
+          {content}
+          """.strip()
           try:
               conn = http.client.HTTPSConnection('generativelanguage.googleapis.com')
               headers = {'Content-Type': 'application/json'}
