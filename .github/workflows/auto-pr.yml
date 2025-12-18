@@ -26,7 +26,36 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ github.event.inputs.branch || github.ref_name }}
+
+      - name: Determine Branch
+        id: branch_picker
+        run: |
+          INPUT_BRANCH="${{ github.event.inputs.branch }}"
+          CONTEXT_BRANCH="${{ github.ref_name }}"
+          
+          if [ -n "$INPUT_BRANCH" ]; then
+            TARGET_BRANCH="$INPUT_BRANCH"
+            echo "Using input branch: $TARGET_BRANCH"
+          else
+            if [ "$CONTEXT_BRANCH" != "main" ]; then
+              TARGET_BRANCH="$CONTEXT_BRANCH"
+              echo "Input is empty. Using context branch: $TARGET_BRANCH"
+            else
+              echo "Input is empty and context is main. Searching for most recent branch..."
+              # Find the most recently updated branch that is not 'main'
+              TARGET_BRANCH=$(git branch -r --sort=-committerdate | grep -v 'origin/HEAD' | grep -v 'origin/main' | head -n 1 | sed 's/.*origin\///')
+              if [ -z "$TARGET_BRANCH" ]; then
+                echo "Error: No branches found other than main."
+                exit 1
+              fi
+              echo "Detected target branch: $TARGET_BRANCH"
+            fi
+          fi
+          echo "BRANCH=$TARGET_BRANCH" >> $GITHUB_OUTPUT
+
+      - name: Switch to Target Branch
+        run: |
+          git checkout ${{ steps.branch_picker.outputs.BRANCH }}
 
       - name: Generate AI PR Description
         id: ai_pr
@@ -90,14 +119,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Check if PR already exists
-          EXISTS=$(gh pr list --head "${{ github.event.inputs.branch || github.ref_name }}" --base "${{ github.event.inputs.base }}" --state open --json number --jq '.[0].number')
+          EXISTS=$(gh pr list --head "${{ steps.branch_picker.outputs.BRANCH }}" --base "${{ github.event.inputs.base }}" --state open --json number --jq '.[0].number')
           if [ -n "$EXISTS" ]; then
             echo "PR already exists: #$EXISTS. Updating title and body if AI generated."
             gh pr edit "$EXISTS" --title "${{ steps.ai_pr.outputs.TITLE }}" --body "${{ steps.ai_pr.outputs.BODY }}"
           else
             gh pr create \
               --base "${{ github.event.inputs.base }}" \
-              --head "${{ github.event.inputs.branch || github.ref_name }}" \
+              --head "${{ steps.branch_picker.outputs.BRANCH }}" \
               --title "${{ steps.ai_pr.outputs.TITLE || 'Manual PR' }}" \
               --body "${{ steps.ai_pr.outputs.BODY || 'Created via Manual PR Creator Action' }}"
           fi
