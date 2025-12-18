@@ -76,9 +76,7 @@ jobs:
             SUMMARY="- 内部改善（詳細なし）"
           else
             export CONTENT_LIST
-
-            # ---- write python script (heredoc end marker MUST be at column 0) ----
-            cat > /tmp/gen_summary.py <<'PY'
+            SUMMARY="$(python3 - <<'PY'
 import os, json, http.client
 
 api_key = os.getenv("GEMINI_API_KEY")
@@ -124,7 +122,7 @@ try:
 except Exception:
     print("- 内部改善（詳細なし）")
 PY
-            SUMMARY="$(python3 /tmp/gen_summary.py)"
+)"
           fi
 
           # ✅ multiline output (NO %0A)
@@ -170,11 +168,13 @@ PY
             branch=$(_jq '.headRefName')
             repo_full=$(_jq '.headRepository.nameWithOwner')
 
+            # 保護：消したくないブランチ
             if [[ "$branch" == "main" || "$branch" == "master" || "$branch" == "develop" || "$branch" == release/* ]]; then
               echo "Skip protected branch: $branch (PR #$pr_number)"
               continue
             fi
 
+            # 既に消えてたらスキップ
             if ! gh api -H "Accept: application/vnd.github+json" "/repos/$repo_full/git/ref/heads/$branch" >/dev/null 2>&1; then
               echo "Branch already deleted: $repo_full:$branch (PR #$pr_number)"
               continue
