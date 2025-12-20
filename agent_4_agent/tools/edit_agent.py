@@ -42,8 +42,8 @@ def get_agent_file(agent_name: str, file_name: str) -> str:
     戻り値: ファイル内容またはエラーメッセージ
     """
     try:
-        # このファイルの2階層上のディレクトリを取得
-        base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        # このファイルの3階層上のディレクトリを取得
+        base_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         file_path = os.path.join(base_path, agent_name, file_name)
         
         if not os.path.isfile(file_path):
@@ -65,8 +65,8 @@ def edit_agent_file(agent_name: str, file_name: str, new_code: str) -> str:
     戻り値: 成功/失敗メッセージ
     """
     try:
-        # このファイルの2階層上のディレクトリを取得
-        base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        # このファイルの3階層上のディレクトリを取得
+        base_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         file_path = os.path.join(base_path, agent_name, file_name)
         
         if not os.path.isfile(file_path):
