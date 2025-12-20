@@ -3,9 +3,7 @@ import uvicorn
 from google.adk.a2a.utils.agent_to_a2a import to_a2a
 from .import root_agent
 import os
-from dotenv import load_dotenv
 
-load_dotenv()
 PORT = int(os.getenv("PORT", 8001))
 a2a_app = to_a2a(root_agent, port=PORT)
 
