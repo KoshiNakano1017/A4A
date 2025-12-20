@@ -28,7 +28,7 @@ def main():
         agents = discover_agents()
         
         for agent in agents:
-            print(f"Starting {agent.name} on port {agent.port} (module: {agent.module})...")
+            # print(f"Starting {agent.name} on port {agent.port} (module: {agent.module})...")
             
             # Passing PORT as env var
             env = os.environ.copy()
@@ -42,7 +42,7 @@ def main():
             processes.append(p)
 
         # Start coordinator agent
-        print("Starting coordinator agent (a4a.agent) on port 8000...")
+        # print("Starting coordinator agent (a4a.agent) on port 8000...")
         env_coord = os.environ.copy()
         env_coord["PORT"] = "8000"
         p_coord = subprocess.Popen(
@@ -52,7 +52,7 @@ def main():
         )
         processes.append(p_coord)
 
-        print(f"Started {len(processes)} processes. Press Ctrl+C to stop.")
+        # print(f"Started {len(processes)} processes. Press Ctrl+C to stop.")
         
         # Keep main thread alive and monitor processes
         while True:
@@ -60,7 +60,7 @@ def main():
             # Check if any process has exited unexpectedly
             for p in processes:
                 if p.poll() is not None:
-                     print(f"Process {p.args} exited with code {p.returncode}")
+                    print(f"Process {p.args} exited with code {p.returncode}")
     except Exception as e:
         print(f"Error: {e}")
         cleanup(None, None)
