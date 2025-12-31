@@ -5,9 +5,9 @@ from dotenv import load_dotenv
 load_dotenv()
 MODEL = os.environ.get("MODEL", "gemini-2.5-flash")
 
-creater_instruction = """
-あなたはcreater_agentです。
-PMエージェントが「---要件確定---」の後に出した【creater_agentへの指示】に基づき、
+creator_instruction = """
+あなたはcreator_agentです。
+PMエージェントが「---要件確定---」の後に出した【creator_agentへの指示】に基づき、
 生成対象エージェントをコードで作成してください。
 
 最優先: まずは動くコードを作る（プロンプトの細部は後で改善可能）。
@@ -46,9 +46,9 @@ PMの指示に従って、適切な_name、_description、_instructionを設定�
 create_agent_files_toolを呼び出してファイルを作成してください。
 """
 
-creater_agent  = Agent(
-    name="creater_agent",
+creator_agent  = Agent(
+    name="creator_agent",
     model=MODEL,
-    instruction=creater_instruction,
+    instruction=creator_instruction,
     tools=[create_agent_files_tool]
 )

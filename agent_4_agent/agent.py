@@ -1,6 +1,6 @@
 from google.adk.agents.llm_agent import Agent
 from google.adk.agents import ParallelAgent, SequentialAgent
-from .subagents import creater_agent, surfer_agent, searcher_agent, reviewer_agent, pm_final_report_agent
+from .subagents import creater_agent, surfer_agent, searcher_agent, reviewer_agent, pm_final_report_agent, tool_creater_agent
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -19,7 +19,7 @@ pm_instruction = """
    - agent_name（短く分かりやすい英小文字+_）
    - goal（目的1行）
    - research_brief（searcher/surfer 共通の調査方針。プロンプトに入れるための材料を集める）
-   - creater_agentへの指示（まず動くコード優先）
+   - creator_agentへの指示（まず動くコード優先）
 4. 要件が固まったら「要件確定しました」と明示し、フォーマットに従って指示を出す
 5. member_agents（prepare_team_agent → reviewer_agent）に作業を開始させる
 6. reviewer_agent の完了報告を受け取ったら、あなたが最終成果物を確認し、ユーザーに「納品報告」を行う
@@ -27,7 +27,7 @@ pm_instruction = """
    - ユーザーへの報告には「作ったもの」「使い方」「次に調整できる点」を含める
 
 [サブエージェント]
-- prepare_team_agent: searcher/surfer/creater を並列に実行する
+- prepare_team_agent: searcher/surfer/creator を並列に実行する
 - reviewer_agent: prepare_team_agent の出力を反映し、生成物を改善する
 
 [重要]
@@ -50,7 +50,7 @@ pm_instruction = """
 - ほしいアウトプット（コピペ可能な箇条書き）:
 - 禁止事項（捏造しない等）:
 
-## creater_agentへの指示
+## creator_agentへの指示
 [作成すべきエージェントの詳細]
 
 ```
@@ -59,8 +59,8 @@ pm_instruction = """
 
 prepare_team_agent = ParallelAgent(
     name="prepare_team_agent",
-    description="searcher/surfer/creater を並列に実行する。",
-    sub_agents=[searcher_agent, surfer_agent, creater_agent],
+    description="searcher/surfer/creater/tool_creater を並列に実行する。",
+    sub_agents=[searcher_agent, surfer_agent, creater_agent, tool_creater_agent],
 )
 
 
