@@ -4,8 +4,9 @@
 エージェントを作るためのエージェント(Agent for Agent)です。略してA4Aと呼びます。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Security](https://img.shields.io/badge/Security-Policy-blue.svg)](SECURITY.md)
+[![Contributing](https://img.shields.io/badge/Contributing-Welcome-green.svg)](CONTRIBUTING.md)
 [![Code of Conduct](https://img.shields.io/badge/Code%20of%20Conduct-Contributor%20Covenant-purple.svg)](CODE_OF_CONDUCT.md)
+[![Security](https://img.shields.io/badge/Security-Policy-blue.svg)](SECURITY.md)
 
 ---
 
