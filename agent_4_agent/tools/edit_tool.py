@@ -41,7 +41,7 @@ def get_animal_location_map(location_name: str) -> str:
     """
     try:
         # このファイルのパスを取得
-        script_path = os.path.abspath(__file__)  # tools/create_custom_tool_agent.py
+        script_path = os.path.abspath(__file__)  # tools/edit_tool.py
         parent_path = os.path.dirname(script_path)  # tools
         grand_parent_dir = os.path.dirname(parent_path)  # agent_4_agent
         grand_grand_parent_dir = os.path.dirname(grand_parent_dir)  # A4A
