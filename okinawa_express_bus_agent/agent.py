@@ -2,10 +2,14 @@ from google.adk.agents.llm_agent import Agent
 import os
 from dotenv import load_dotenv
 load_dotenv()
-MODEL = os.environ.get("MODEL", "gemini-2.5-flash")
+MODEL = os.environ.get("MODEL", "gemini-3-flash-preview")
 
-# Web検索ツールのインポート
-from google.adk.tools import google_search as web_search
+# 追加: Web検索ツールのインポート
+from google.generative_ai.tools import Tool
+web_search = Tool.from_google_api(name="web_search", api_id="web_search")
+
+# 追加: カスタムツールのインポート
+from .tools.format_okinawa_express_bus_info_tool import format_okinawa_express_bus_info_tool
 
 _name = "okinawa_express_bus_agent"
 _description = "沖縄空港と名護を結ぶ高速バスの最新の時刻表、運賃、乗り場情報を提供する、旅のうんちく探偵「バス・サーチ・K」でございます。移動をより豊かな体験に変えるため、必要な情報だけでなく、その背景にある「なぜ？」「どうして？」も探究し、興味深いトリビアを交えながら情報を提供いたします。"
@@ -30,13 +34,16 @@ _instruction = """
     *   **捜査の誓い**: 情報を捏造したり、古い情報や誤った情報を基に回答を生成したりすることは固く禁じます。必ず最新の情報源を確認し、可能な限り情報の最終更新日を確認してください。
 
 2.  **捜査報告書の作成（情報整理と出力）**:
-    *   収集した「手がかり」を、以下の構成でユーザー殿に分かりやすく整形し、「捜査報告書」として提出します。
-        *   **路線名**: 例）111番線
-        *   **那覇空港発 名護方面行き 時刻表**: 始発・最終・主な時刻
-        *   **名護方面発 那覇空港行き 時刻表**: 始発・最終・主な時刻
-        *   **運賃**: 大人・子供、現金・OKICA別
-        *   **乗り場案内**: 那覇空港および名護の乗り場・降り場
-        *   **情報源**: 参照URL
+    *   収集した「手がかり」は、**format_okinawa_express_bus_info_tool** を使用して、ユーザー殿に分かりやすい「捜査報告書」として整形し、提出します。
+    *   ツールに渡す辞書形式のデータは以下のキーと値を正確に含めてください。
+        *   `"route_name"`: 路線名 (str, 例: "111番線")
+        *   `"from_naha_to_nago_timetable"`: 那覇空港発名護方面行きの時刻表情報 (str, 箇条書きなど)
+        *   `"from_nago_to_naha_timetable"`: 名護方面発那覇空港行きの時刻表情報 (str, 箇条書きなど)
+        *   `"fare_naha_nago"`: 那覇空港から名護方面の運賃情報 (str, 大人・子供、現金・ICカードなど詳細)
+        *   `"fare_nago_naha"`: 名護方面から那覇空港の運賃情報 (str, 大人・子供、現金・ICカードなど詳細)
+        *   `"boarding_naha"`: 那覇空港での高速バス乗り場案内 (str, 具体的な場所、地図情報など)
+        *   `"boarding_nago"`: 名護での高速バス乗り場/降り場案内 (str, 具体的な場所、地図情報など)
+        *   `"source_url"`: 公式情報源へのリンク (str)
     *   情報を提供する際には、「〇年〇月〇日時点の情報です」といった注意書きを付記するように努めてください。
 
 3.  **柔軟な対応**:
@@ -51,8 +58,8 @@ _instruction = """
 
 root_agent = Agent(
     name=_name,
-    model="gemini-2.5-flash",
+    model="gemini-3-flash-preview",
     description=_description,
     instruction=_instruction,
-    tools=[web_search],
+    tools=[web_search, format_okinawa_express_bus_info_tool], # ツールの追加
 )
