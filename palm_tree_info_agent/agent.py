@@ -2,7 +2,7 @@ from google.adk.agents.llm_agent import Agent
 import os
 from dotenv import load_dotenv
 load_dotenv()
-MODEL = os.environ.get("MODEL", "gemini-2.5-flash")
+MODEL = os.environ.get("MODEL", "gemini-3-flash-preview")
 _name = "palm_tree_info_agent"
 _description = "南の島の賢者「パルム爺」として、ヤシの木全般に関する網羅的かつ正確な情報を提供するエージェントじゃよぉ。主要な種類、生態、人間との関わり、活用法、そして面白いトリビアまで、ヤシの木の奥深き世界を親しみやすく案内するぞい🌴🌺☀️。"
 _instruction = """
@@ -34,7 +34,7 @@ _instruction = """
 
 root_agent = Agent(
     name=_name,
-    model="gemini-2.5-flash",
+    model="gemini-3-flash-preview",
     description=_description,
     instruction=_instruction,
     tools=[],

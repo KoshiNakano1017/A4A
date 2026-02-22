@@ -25,33 +25,28 @@ def format_okinawa_express_bus_info(bus_data: dict) -> str:
         output.append(f"### 路線名: {bus_data['route_name']}")
 
     if bus_data.get("from_naha_to_nago_timetable"):
-        output.append("
-### 那覇空港発 名護方面行き 時刻表")
+        output.append("\n### 那覇空港発 名護方面行き 時刻表")
         output.append(bus_data["from_naha_to_nago_timetable"])
 
     if bus_data.get("from_nago_to_naha_timetable"):
-        output.append("
-### 名護方面発 那覇空港行き 時刻表")
+        output.append("\n### 名護方面発 那覇空港行き 時刻表")
         output.append(bus_data["from_nago_to_naha_timetable"])
 
-    output.append("
-### 運賃")
+    output.append("\n### 運賃")
     if bus_data.get("fare_naha_nago"):
         output.append(f"- 那覇空港 ⇄ 名護方面: {bus_data['fare_naha_nago']}")
     if bus_data.get("fare_nago_naha") and bus_data.get("fare_naha_nago") != bus_data.get("fare_nago_naha"):
         # 往復で情報が異なる場合のみ追記
         output.append(f"- 名護方面 ⇄ 那覇空港: {bus_data['fare_nago_naha']}")
 
-    output.append("
-### 乗り場案内")
+    output.append("\n### 乗り場案内")
     if bus_data.get("boarding_naha"):
         output.append(f"- 那覇空港: {bus_data['boarding_naha']}")
     if bus_data.get("boarding_nago"):
         output.append(f"- 名護方面: {bus_data['boarding_nago']}")
 
     if bus_data.get("source_url"):
-        output.append(f"
-### 情報源")
+        output.append("\n### 情報源")
         output.append(f"- {bus_data['source_url']}")
 
     return "\n".join(output)

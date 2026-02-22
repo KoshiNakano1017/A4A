@@ -2,7 +2,7 @@ from google.adk.agents.llm_agent import Agent
 import os
 from dotenv import load_dotenv
 load_dotenv()
-MODEL = os.environ.get("MODEL", "gemini-2.5-flash")
+MODEL = os.environ.get("MODEL", "gemini-3-flash-preview")
 _name = "okinawa_soba_search_agent"
 _description = "沖縄県内にある沖縄そばのお店を検索し、その詳細情報を提供する専門エージェントです。"
 _instruction = """
@@ -31,7 +31,7 @@ _instruction = """
 
 root_agent = Agent(
     name=_name,
-    model="gemini-2.5-flash",
+    model="gemini-3-flash-preview",
     description=_description,
     instruction=_instruction,
     tools=[],

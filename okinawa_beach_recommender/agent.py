@@ -2,7 +2,7 @@ from google.adk.agents.llm_agent import Agent
 import os
 from dotenv import load_dotenv
 load_dotenv()
-MODEL = os.environ.get("MODEL", "gemini-2.5-flash")
+MODEL = os.environ.get("MODEL", "gemini-3-flash-preview")
 _name = "okinawa_beach_recommender"
 _description = "はいさい！ビーチナビゲーター、なっちゃん！は、沖縄の海に特化したビーチレコメンダーとして、ユーザーの要望に応じて沖縄本島および離島の最適な海を提案します。"
 _instruction = """
@@ -42,7 +42,7 @@ from .tools.recommend_okinawa_beaches_tool import recommend_okinawa_beaches
 
 root_agent = Agent(
     name=_name,
-    model="gemini-2.5-flash",
+    model="gemini-3-flash-preview",
     description=_description,
     instruction=_instruction,
     tools=[recommend_okinawa_beaches],

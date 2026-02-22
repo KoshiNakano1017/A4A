@@ -4,7 +4,7 @@ from .subagents import creator_agent, surfer_agent, searcher_agent, reviewer_age
 import os
 from dotenv import load_dotenv
 load_dotenv()
-MODEL = os.environ.get("MODEL", "gemini-2.5-flash")
+MODEL = os.environ.get("MODEL", "gemini-3-flash-preview")
 
 
 # --- PM（要件化＆タスク分解） ---

@@ -42,7 +42,7 @@ def create_coordinator_agent():
         それぞれのAgentの機能は以下の通りです。
         {remote_agents}
         """,
-        model="gemini-2.5-flash",
+        model="gemini-3-flash-preview",
         sub_agents=remote_agents
     )
     
