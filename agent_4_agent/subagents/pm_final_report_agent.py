@@ -3,7 +3,7 @@ from ..tools import create_agent_files_tool, edit_agent_file_tool, get_agent_fil
 import os
 from dotenv import load_dotenv
 load_dotenv()
-MODEL = os.environ.get("MODEL", "gemini-2.5-flash")
+MODEL = os.environ.get("MODEL", "gemini-3-flash-preview")
 
 # --- pm_report agent ---
 pm_final_report_instruction = """

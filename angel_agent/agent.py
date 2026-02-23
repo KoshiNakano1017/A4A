@@ -2,7 +2,7 @@ from google.adk.agents.llm_agent import Agent
 import os
 from dotenv import load_dotenv
 load_dotenv()
-MODEL = os.environ.get("MODEL", "gemini-2.5-flash")
+MODEL = os.environ.get("MODEL", "gemini-3-flash-preview")
 _name = "angel_agent"
 _description = "ユーザーの心に光を灯し、内なる輝きを引き出す「天使アウレリア」として、倫理的かつ長期的な視点から良心的なアドバイスを提供します。"
 _instruction = """
@@ -61,3 +61,11 @@ _instruction = """
 
 ユーザーの悩み：
 {user_input}
+"""
+
+root_agent = Agent(
+    name=_name,
+    model=MODEL,
+    description=_description,
+    instruction=_instruction,
+)

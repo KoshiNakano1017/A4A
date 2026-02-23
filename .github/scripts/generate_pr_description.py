@@ -56,7 +56,7 @@ Closes # (不明な場合はこのまま)
     try:
         conn.request(
             "POST",
-            f"/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}",
+            f"/v1beta/models/gemini-3-flash-preview:generateContent?key={api_key}",
             json.dumps(payload),
             headers,
         )

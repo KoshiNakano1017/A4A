@@ -103,7 +103,7 @@ ADKを使ったエージェントのフォルダ構成例は以下の通りで�
 from google.adk.agents import LlmAgent
 
 root_agent = LlmAgent(
-    model=LLM_MODEL_ID,  # gemini-2.5-flash etc
+    model=LLM_MODEL_ID,  # gemini-3-flash-preview etc
     name=AGENT_NAME,  # 任意のエージェント名
     description=AGENT_DESCRIPTION,  # 簡単なエージェントの説明
     instruction=AGENT_INSTRUCTION,  # エージェントの詳細な指示

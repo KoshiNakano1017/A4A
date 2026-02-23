@@ -9,7 +9,7 @@ from ..tools import (
 import os
 from dotenv import load_dotenv
 load_dotenv()
-MODEL = os.environ.get("MODEL", "gemini-2.5-flash")
+MODEL = os.environ.get("MODEL", "gemini-3-flash-preview")
 
 tool_creator_instruction = """
 あなたはtool_creator_agentです。
