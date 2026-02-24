@@ -226,23 +226,6 @@ graph TD
 
 ---
 
-## おわりに
-
-A4Aは、「AIがAIを作る」という未来への第一歩です。
-
-まだ実験段階ですが、コミュニティの皆さんと一緒に、この技術を発展させていきたいと思っています。
-
-ぜひ、あなたのアイデアやフィードバックをお聞かせください！
-
----
-
-## 参加方法
-
-- **GitHub**: [tyukei/A4A](https://github.com/tyukei/A4A)
-- **コントリビューション**: [CONTRIBUTING.md](../CONTRIBUTING.md)
-- **ディスカッション**: GitHubのIssuesやDiscussionsで議論しましょう
-
----
 
 ## 関連ドキュメント
 
