@@ -3,8 +3,6 @@
 
 エージェントを作るためのエージェント(Agent for Agent)です。略してA4Aと呼びます。
 
-詳しくは[Zennの記事](https://zenn.dev/churadata/articles/0015498168c49f)より
-
 <!-- Project Status Badges -->
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![GitHub release](https://img.shields.io/github/v/release/tyukei/A4A)](https://github.com/tyukei/A4A/releases)
