@@ -130,19 +130,3 @@ make query q="新しいエージェントを作って"
 - [A2A Protocol](https://codelabs.developers.google.com/intro-a2a-purchasing-concierge)
 - [Vertex AI Agent Engine](https://docs.cloud.google.com/agent-builder/agent-engine/overview)
 
----
-
-## ライセンス
-
-このプロジェクトは [MIT License](LICENSE) の下で公開されています。
-
----
-
-## 謝辞
-
-このプロジェクトは、Google ADKとA2Aプロトコルを活用しています。
-コミュニティの皆様のフィードバックとコントリビューションに感謝します。
-
----
-
-**作成者**: [@tyukei](https://github.com/tyukei)
