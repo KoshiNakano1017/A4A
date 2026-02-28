@@ -1,7 +1,7 @@
-# A4A
+# A4Aツールを使用して、システム開発プロジェクトを自動化
 ![A4A Logo](assets/a4a.png)
 
-エージェントを作るためのエージェント(Agent for Agent)です。略してA4Aと呼びます。
+
 
 <!-- Project Status Badges -->
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -70,22 +70,6 @@ adk web
 - **A2A連携**: 作成したエージェントをA2Aでつなげる
 - **自動ディプロイ**: Agent Engineへのディプロイ（WIP）
 
----
-
-## コントリビュート
-
-自分のオリジナルのエージェントを作って、ぜひPRを作成して共有してください！
-
-詳細は [CONTRIBUTING.md](CONTRIBUTING.md) をご確認ください。
-
-### コントリビュート手順
-
-1. このリポジトリをFork
-2. Forkしたリポジトリをclone
-3. [セットアップ手順](docs/setup_and_execution.md)に従ってエージェントを作成
-4. PRを作成
-
----
 
 ## Web UI
 
