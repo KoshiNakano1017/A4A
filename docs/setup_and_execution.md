@@ -79,7 +79,6 @@ uv run python -m a4a.web
 
 **Windows で `make` を使う場合**  
 `make run-verbose`（ターミナル 1）と `make ui`（ターミナル 2）でも同じ動作になります。
-<<<<<<< HEAD
 
 ---
 
@@ -111,5 +110,3 @@ uv run python -m a4a.web
 リクエスト／レスポンスのログや作業内容を「ポート指定で起動したターミナル」に出したいときは、**Coordinator（8000）経由でだけ**クエリを送ること。各エージェントの作業内容は Coordinator が応答の末尾で報告する（`[エージェント活動] エージェント名: 実施したこと, ...`）。詳しくは [agent_monitoring.md](agent_monitoring.md) を参照。
 
 より詳しい手順・個別エージェントへの直接クエリは [realtime_verification.md](realtime_verification.md) と [agent_monitoring.md](agent_monitoring.md) を参照してください。
-=======
->>>>>>> 985ef19 (Update setup_and_execution.md)
