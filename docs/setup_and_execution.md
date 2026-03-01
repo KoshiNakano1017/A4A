@@ -79,3 +79,31 @@ uv run python -m a4a.web
 
 **Windows で `make` を使う場合**  
 `make run-verbose`（ターミナル 1）と `make ui`（ターミナル 2）でも同じ動作になります。
+
+---
+
+## 各エージェントの動作をリアルタイムで把握する
+
+「今どのエージェントが動いているか」を確認するには、**ターミナル 1 で `uv run python -m a4a.run_all --verbose` で起動したまま**にし、そのターミナルに流れるログを見ます。
+
+### 何を確認するか
+
+- 起動時には **Started ○○ on port ○○○○** が並び、どのエージェントがどのポートで立っているかが分かります。
+- クエリを送る（Web UI や `make query` など）と、**どのエージェントにリクエストが届いたか**がログに出ます。各行の先頭の **`[エージェント名:ポート]`** が、その行のログを出したエージェントです。
+
+例（ログのイメージ）:
+
+```
+[coordinator_agent:8000] INFO:     127.0.0.1 - "POST /a2a/... HTTP/1.1" 200
+[architect_agent:8001] INFO:     127.0.0.1 - "POST /a2a/... HTTP/1.1" 200
+```
+
+→ Coordinator がリクエストを受け、続けて architect_agent に依頼が飛んだことが分かります。
+
+### 手順のまとめ
+
+1. **ターミナル 1** で `uv run python -m a4a.run_all --verbose` を実行する（起動したままにする）。
+2. **ターミナル 2** で Web UI（`uv run python -m a4a.web`）を起動するか、`make query q="..."` でクエリを送る。
+3. **ターミナル 1** のログで、クエリ送信のたびにどの **`[エージェント名:ポート]`** の行が増えるかを確認する。
+
+より詳しい手順・個別エージェントへの直接クエリは [realtime_verification.md](realtime_verification.md) と [agent_monitoring.md](agent_monitoring.md) を参照してください。
