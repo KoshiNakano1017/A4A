@@ -15,6 +15,9 @@ GEMINI_API_KEYは、以下から取得できます。
 
 https://aistudio.google.com/api-keys
 
+.envファイルに、作成したプログラムの保存先を指定してください
+OUTPUT_PROJECT_ROOT=格納したいPATH
+
 ## 実行手順
 以下ターミナルより実行します。
 ```bash
