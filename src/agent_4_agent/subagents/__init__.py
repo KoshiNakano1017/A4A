@@ -6,6 +6,9 @@ from .pm_final_report_agent import pm_final_report_agent
 from .tool_creator_agent import tool_creator_agent
 from .quality_reporter_agent import quality_reporter_agent
 from .system_reviewer_agent import system_reviewer_agent
+from .engineer_agent import engineer_agent
+from .prompt_engineer_agent import prompt_engineer_agent
+from .security_officer_agent import security_officer_agent
 
 __all__ = [
     "creator_agent",
@@ -16,4 +19,7 @@ __all__ = [
     "tool_creator_agent",
     "quality_reporter_agent",
     "system_reviewer_agent",
+    "engineer_agent",
+    "prompt_engineer_agent",
+    "security_officer_agent",
 ]
