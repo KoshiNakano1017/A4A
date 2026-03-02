@@ -1,6 +1,16 @@
 from google.adk.agents.llm_agent import Agent
 from google.adk.agents import ParallelAgent, SequentialAgent
-from .subagents import creator_agent, surfer_agent, searcher_agent, reviewer_agent, pm_final_report_agent, tool_creator_agent
+from .subagents import (
+    creator_agent,
+    surfer_agent,
+    searcher_agent,
+    reviewer_agent,
+    pm_final_report_agent,
+    tool_creator_agent,
+    engineer_agent,
+    prompt_engineer_agent,
+    security_officer_agent,
+)
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -66,8 +76,18 @@ prepare_team_agent = ParallelAgent(
 
 member_agents = SequentialAgent(
     name="member_agents",
-    description="prepare_team_agentとreviewer_agentとpm_final_report_agentを順番に実行する。",
-    sub_agents=[prepare_team_agent, reviewer_agent, pm_final_report_agent],
+    description=(
+        "prepare_team_agent→engineer_agent→security_officer_agent→prompt_engineer_agent→"
+        "reviewer_agent→pm_final_report_agent の順番で実行する。"
+    ),
+    sub_agents=[
+        prepare_team_agent,
+        engineer_agent,
+        security_officer_agent,
+        prompt_engineer_agent,
+        reviewer_agent,
+        pm_final_report_agent,
+    ],
 )
 
 
@@ -77,8 +97,9 @@ pm_agent = Agent(
     instruction=pm_instruction,
     description=(
         "Agentを作成するためのPMエージェントです。"
-        "要件が固まり次第、member_agents（prepare_team_agent→reviewer_agent）に指示を出して作業を開始させてください。"
-        "最終成果物ができたら、必ずユーザーに納品報告してください。"
+        "要件が固まり次第、member_agents"
+        "（prepare_team_agent→engineer_agent→security_officer_agent→prompt_engineer_agent→reviewer_agent）"
+        "に指示を出して作業を開始させてください。最終成果物ができたら、必ずユーザーに納品報告してください。"
     ),
     sub_agents=[member_agents]
 )

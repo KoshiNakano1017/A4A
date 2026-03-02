@@ -46,13 +46,13 @@ DOC_TYPE_MAP = {
 
 
 def write_design_doc(doc_type: str, title: str, content: str, suffix: str = "") -> dict:
-    """設計成果物を docs/system_dev に保存する。old/{doc_type} への自動アーカイブと正本管理を行う。
+    """設計成果物を docs/system_dev に保存する。old/<doc_type> への自動アーカイブと正本管理を行う。
 
-    - アーカイブ構造: docs/system_dev/old/{doc_type}/ を自動作成する（例: docs/system_dev/old/er_diagram/）。
-    - 「保存前」の自動アーカイブ: docs/system_dev 直下に同名ファイルが既に存在する場合、そのファイルを削除せず docs/system_dev/old/{doc_type}/ へ移動する。
+    - アーカイブ構造: docs/system_dev/old/<doc_type>/ を自動作成する（例: docs/system_dev/old/er_diagram/）。
+    - 「保存前」の自動アーカイブ: docs/system_dev 直下に同名ファイルが既に存在する場合、そのファイルを削除せず docs/system_dev/old/<doc_type>/ へ移動する。
       移動時のファイル名には作成日時を付与し、重複を防ぐ（例: er_diagram_Main_20240520_1800.md）。
     - 正本の固定: suffix の有無にかかわらず、docs/system_dev 直下には常にバージョン表記のない固定ファイル名で最新版1ファイルのみが存在する。
-    - 成功時は「旧版を /old/{doc_type}/ フォルダにアーカイブし、最新版を正本として保存しました」または「最新版を正本として保存しました」を含むメッセージを返す。
+    - 成功時は「旧版を /old/<doc_type>/ フォルダにアーカイブし、最新版を正本として保存しました」または「最新版を正本として保存しました」を含むメッセージを返す。
     出力先ルートは環境変数 OUTPUT_PROJECT_ROOT で変更可能（未設定時は A4A プロジェクト内）。
 
     Args:
