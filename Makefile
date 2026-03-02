@@ -1,16 +1,25 @@
-.PHONY: run query ui clean help
+.PHONY: run run-verbose query ui clean help print-terminals
 
-PYTHON := python
+# Prefer uv run so .venv is used; fallback to python if not using uv
+PYTHON := uv run python
 
 help:
 	@echo "Available commands:"
-	@echo "  make run         - Start all agents (Coordinator + Sub-agents)"
-	@echo "  make query q=... - Send a query to the coordinator (e.g., make query q='Hello')"
-	@echo "  make ui          - Start the Web GUI (http://localhost:8888)"
-	@echo "  make clean       - Kill all Python processes related to this project (zombie cleanup)"
+	@echo "  make run              - Start all agents (Coordinator + Sub-agents)"
+	@echo "  make run-verbose      - Start all agents with real-time log streaming ([agent:port] prefix)"
+	@echo "  make print-terminals  - Print commands to run each agent in a separate terminal"
+	@echo "  make query q=...      - Send a query to the coordinator (e.g., make query q='Hello')"
+	@echo "  make ui               - Start the Web GUI (http://localhost:8888)"
+	@echo "  make clean            - Kill all Python processes related to this project (zombie cleanup)"
 
 run:
 	$(PYTHON) -m a4a.run_all
+
+run-verbose:
+	$(PYTHON) -m a4a.run_all --verbose
+
+print-terminals:
+	$(PYTHON) -m a4a.print_terminals
 
 ui:
 	$(PYTHON) -m a4a.web
