@@ -4,19 +4,42 @@ import time
 import os
 import signal
 from pathlib import Path
+import threading
 from .discovery import discover_agents
 
+VERBOSE_FLAG = "--verbose"
+VERBOSE_SHORT = "-v"
+
+
+def _stream_output(pipe, prefix: str):
+    """サブプロセスの stdout を読み、行ごとに [prefix] を付けて表示する。"""
+    try:
+        for line in iter(pipe.readline, ""):
+            if line:
+                sys.stdout.write(f"[{prefix}] {line}")
+                sys.stdout.flush()
+    except (BrokenPipeError, OSError):
+        pass
+    finally:
+        try:
+            pipe.close()
+        except OSError:
+            pass
+
+
 def main():
-    processes = []
+    verbose = VERBOSE_FLAG in sys.argv or VERBOSE_SHORT in sys.argv
+    # (process, name) のリスト。cleanup で process だけ参照する
+    process_list = []
 
     def cleanup(signum, frame):
         print("\nStopping all agents...")
-        for p in processes:
+        for p, _ in process_list:
             if p.poll() is None:
                 p.terminate()
         time.sleep(1)
-        for p in processes:
-             if p.poll() is None:
+        for p, _ in process_list:
+            if p.poll() is None:
                 p.kill()
         sys.exit(0)
 
@@ -24,53 +47,93 @@ def main():
     signal.signal(signal.SIGTERM, cleanup)
 
     try:
-        # Discover agents dynamically
         print("Discovering agents...")
-        agents = discover_agents()
-        
-        # agents/ サブディレクトリがあればそこを cwd にする
-        root = Path(os.getcwd())
+        root = Path.cwd()
+        agents = discover_agents(root_dir=root)
+
+        # agents/ サブディレクトリがあればそこを cwd にする（agent discovery と同じ前提）
         agents_dir = root / "agents"
-        agent_cwd = str(agents_dir) if agents_dir.exists() else str(root)
+        scan_dir = agents_dir if agents_dir.exists() else root
+        agent_cwd = str(scan_dir)
 
         for agent in agents:
-            # print(f"Starting {agent.name} on port {agent.port} (module: {agent.module})...")
-
-            # Passing PORT as env var
             env = os.environ.copy()
             env["PORT"] = str(agent.port)
 
-            p = subprocess.Popen(
-                [sys.executable, "-m", agent.module],
-                env=env,
-                cwd=agent_cwd,
-            )
-            processes.append(p)
+            if verbose:
+                p = subprocess.Popen(
+                    [sys.executable, "-m", agent.module],
+                    env=env,
+                    cwd=agent_cwd,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                    text=True,
+                    encoding="utf-8",
+                    errors="replace",
+                    bufsize=1,
+                )
+                t = threading.Thread(
+                    target=_stream_output,
+                    args=(p.stdout, f"{agent.name}:{agent.port}"),
+                    daemon=True,
+                )
+                t.start()
+                print(f"Started {agent.name} on port {agent.port} (verbose)")
+            else:
+                p = subprocess.Popen(
+                    [sys.executable, "-m", agent.module],
+                    env=env,
+                    cwd=agent_cwd,
+                )
+                print(f"Started {agent.name} on port {agent.port}")
 
-        # Start coordinator agent
-        # print("Starting coordinator agent (a4a_lab.agent) on port 8000...")
+            process_list.append((p, agent.name))
+
+        # Coordinator
         env_coord = os.environ.copy()
         env_coord["PORT"] = "8000"
-        p_coord = subprocess.Popen(
-            [sys.executable, "-m", "a4a_lab.agent"],
-            env=env_coord,
-            cwd=os.getcwd()
-        )
-        processes.append(p_coord)
+        if verbose:
+            p_coord = subprocess.Popen(
+                [sys.executable, "-m", "a4a_lab.agent"],
+                env=env_coord,
+                cwd=str(root),
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                bufsize=1,
+            )
+            t_coord = threading.Thread(
+                target=_stream_output,
+                args=(p_coord.stdout, "coordinator:8000"),
+                daemon=True,
+            )
+            t_coord.start()
+            print("Started coordinator_agent on port 8000 (verbose)")
+        else:
+            p_coord = subprocess.Popen(
+                [sys.executable, "-m", "a4a_lab.agent"],
+                env=env_coord,
+                cwd=str(root),
+            )
+            print("Started coordinator_agent on port 8000")
 
-        # print(f"Started {len(processes)} processes. Press Ctrl+C to stop.")
-        
-        # Keep main thread alive and monitor processes
+        process_list.append((p_coord, "coordinator"))
+
+        if verbose:
+            print("\n--- 各エージェントのログは [エージェント名:ポート] プレフィックス付きで表示されます。Ctrl+C で終了。---\n")
+
         while True:
             time.sleep(1)
-            # Remove and report processes that have exited
-            dead = [p for p in processes if p.poll() is not None]
-            for p in dead:
-                print(f"Process {p.args} exited with code {p.returncode}")
-                processes.remove(p)
+            dead = [(p, name) for p, name in process_list if p.poll() is not None]
+            for p, name in dead:
+                print(f"Process {name} exited with code {p.returncode}")
+                process_list.remove((p, name))
     except Exception as e:
         print(f"Error: {e}")
         cleanup(None, None)
+
 
 if __name__ == "__main__":
     main()

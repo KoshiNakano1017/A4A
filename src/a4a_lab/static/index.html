@@ -165,6 +165,21 @@
       border-top: 1px solid #334155;
       margin: 0.8em 0;
     }
+    /* 作業メトリクス・作業報告 */
+    .bubble.agent .work-in-progress {
+      display: block;
+      font-size: 0.8rem;
+      color: #64748b;
+      margin: 0.35em 0;
+    }
+    .bubble.agent .agent-activity {
+      display: block;
+      font-size: 0.8rem;
+      color: #38bdf8;
+      margin-top: 0.5em;
+      padding: 6px 0 0;
+      border-top: 1px solid #334155;
+    }
     .bubble.agent table {
       border-collapse: collapse;
       width: 100%;
@@ -491,7 +506,11 @@
         // 完了後にマークダウンとしてレンダリング
         if (agentBubble) {
           agentBubble.classList.remove("streaming");
-          agentBubble.innerHTML = marked.parse(rawText.trim());
+          let html = marked.parse(rawText.trim());
+          // 作業メトリクス・作業報告をスタイル付きで表示
+          html = html.replace(/\[作業中\] ([^\n]+)/g, "<span class='work-in-progress'>[作業中] $1</span>");
+          html = html.replace(/\[エージェント活動\] ([^\n]+)/g, "<span class='agent-activity'>[エージェント活動] $1</span>");
+          agentBubble.innerHTML = html;
         }
         send.disabled = false;
         input.focus();

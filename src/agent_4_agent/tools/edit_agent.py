@@ -23,14 +23,11 @@ def create_agent_files(agent_name: str, agent_code: str) -> str:
             f.write('__all__ = ["root_agent"]\n')
         # a2a_agent.pyファイルを作成
         with open(os.path.join(agent_dir, "a2a_agent.py"), "w") as f:
-            f.write("import uvicorn\n")
-            f.write("from google.adk.a2a.utils.agent_to_a2a import to_a2a\n")
-            f.write("from .import root_agent\n")
-            f.write("import os\n")
-            f.write("PORT = int(os.getenv(\"PORT\", 8001))\n")
-            f.write("a2a_app = to_a2a(root_agent, port=PORT)\n")
+            f.write("from . import root_agent\n")
+            f.write("\n")
             f.write("if __name__ == \"__main__\":\n")
-            f.write("    uvicorn.run(a2a_app, host=\"0.0.0.0\", port=PORT)\n")
+            f.write("    from a4a.agent_activity import run_a2a_with_activity\n")
+            f.write("    run_a2a_with_activity(root_agent)\n")
         # agent.pyファイルを作成
         with open(os.path.join(agent_dir, "agent.py"), "w") as f:
             f.write(agent_code)

@@ -4,7 +4,7 @@ import argparse
 from google.adk.agents.remote_a2a_agent import RemoteA2aAgent
 from google.adk.runners import Runner
 from google.adk.sessions.in_memory_session_service import InMemorySessionService
-from vertexai.generative_models import Content, Part
+from google.genai import types as genai_types
 
 async def query_agent(port: int, query: str):
     agent_card_url = f"http://127.0.0.1:{port}/.well-known/agent-card.json"
@@ -28,10 +28,10 @@ async def query_agent(port: int, query: str):
         session_id=session_id
     )
     
-    # メッセージの構築
-    new_message = Content(
+    # メッセージの構築（ADK Runner は google.genai.types.Content を期待する）
+    new_message = genai_types.Content(
         role="user",
-        parts=[Part.from_text(query)]
+        parts=[genai_types.Part.from_text(text=query)]
     )
     
     # Runner を使ってメッセージを送信
