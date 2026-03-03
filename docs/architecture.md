@@ -106,6 +106,60 @@ project/
 
 ---
 
+## A4A エージェントと配下
+
+**coordinator_agent** は A4A の最上位に位置する PM エージェントです。  
+ユーザーの窓口となり、設計・レビューサイクルの司令塔として、適切な専門エージェントに作業を振り分けます。
+
+### coordinator_agent（PM エージェント）
+
+- **ポート**: 8000（ユーザーはここに話しかける）
+- **役割**
+  - ユーザーから命令・要望を受け取る
+  - 曖昧な要望は企画エージェントと相談して具体化してから設計・実装に回す
+  - アーキテクトの設計要約とレビュー結果を統合し、「Go」になった成果物だけを「完了・採用可」として報告
+  - 複数エージェントの結果をまとめ、クライアントに分かりやすく伝える
+
+### 配下エージェント（Automated Discovery で検出）
+
+`a2a_agent.py` を持つディレクトリが自動検出され、 Coordinator の sub_agents として登録されます。  
+例として以下のようなエージェントが存在します。
+
+| 種別 | エージェント | 役割 |
+|------|-------------|------|
+| **システム開発** | architect_agent | 設計（ER 図・フロー図等を docs/system_dev に格納） |
+| | review_agent | レビュー（設計書の ER 図とインフラの分離・API 制約を検証、Go/要修正を判定） |
+| | engineer_agent | アーキテクトの指示で実装、レビュー指摘で修正 |
+| | ops_agent | 運用保守・DevOps（メトリクス、インシデント LOG、承認後自動修正） |
+| | planning_agent | 企画（課題・候補機能・費用対効果・実現性・工期の提案） |
+| | planning_b_agent | 企画 B（planning_agent の提案に否定的立場で検証） |
+| **エージェント作成** | agent_4_agent | 新しいエージェントを対話的に生成（下記参照） |
+| **その他** | 各種ドメインエージェント | 沖縄そば、ビーチ、バス、パームツリーなど（discovery で検出されたもの） |
+
+### agent_4_agent とその配下チーム
+
+**agent_4_agent** は「エージェントを作るためのエージェント」です。  
+要件確定 → 並列調査・作成 → エンジニア・セキュリティ・プロンプト改善 → レビュー → 納品報告 の流れで、新しい A2A エージェントを生成します。
+
+#### agent_4_agent の構成
+
+| エージェント | 役割 |
+|-------------|------|
+| **pm_agent** | PM。ユーザー要望から要件を明確化し、agent_name・goal・research_brief・creator 指示を決めて member_agents に作業を開始させる。最終的にユーザーに納品報告する。 |
+| **member_agents**（Sequential） | prepare_team_agent → engineer_agent → security_officer_agent → prompt_engineer_agent → reviewer_agent → pm_final_report_agent の順で実行。 |
+| **prepare_team_agent**（Parallel） | searcher / surfer / creator / tool_creator を並列実行。 |
+| **searcher_agent** | リサーチ担当。research_brief に従って調査し、agent.py の instruction に貼れる prompt_inserts を出力。 |
+| **surfer_agent** | ネットサーフィン担当。雑学・珍事件等を調査し、エージェントのキャラク・口調提案を出力。 |
+| **creator_agent** | PM の指示に基づき、create_agent_files_tool で agent.py 等のファイルを作成。 |
+| **tool_creator_agent** | カスタムツールの作成・編集・管理。 |
+| **engineer_agent** | 設計に基づく実装・修正。 |
+| **security_officer_agent** | セキュリティ観点での検証・改善。 |
+| **prompt_engineer_agent** | プロンプトの最適化。 |
+| **reviewer_agent** | searcher/surfer の prompt_inserts を instruction に統合し、カスタムツールを agent に接続して完成度を上げる。 |
+| **pm_final_report_agent** | 納品報告（作成したエージェント、生成ファイル、次に調整できる点）をユーザーに提示する。 |
+
+---
+
 ## OPS エージェントと配下チーム
 
 **ops_agent** は運用保守・DevOps と上流工程の PM 機能を兼ねる「司令塔」エージェントです。  
