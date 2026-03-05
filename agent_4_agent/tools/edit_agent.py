@@ -1,5 +1,12 @@
 from google.adk.tools import FunctionTool
 import os
+from pathlib import Path
+from dotenv import load_dotenv
+load_dotenv()
+
+# 出力先ルート: OUTPUT_PROJECT_ROOT（.env）未設定時は A4A ルート
+_A4A_ROOT = Path(__file__).resolve().parent.parent.parent
+_OUTPUT_ROOT = Path(os.environ.get("OUTPUT_PROJECT_ROOT", _A4A_ROOT))
 
 # ファイル作成用のカスタムツール
 def create_agent_files(agent_name: str, agent_code: str) -> str:
@@ -7,14 +14,14 @@ def create_agent_files(agent_name: str, agent_code: str) -> str:
     agent_name: エージェント名（英小文字+_）
     agent_code: エージェントのPythonコード
     戻り値: 成功/失敗メッセージ
+    出力先: OUTPUT_PROJECT_ROOT（プロジェクトルート）
     """
     try:
-        script_path = os.path.abspath(__file__) # tools/edit_agent.py
-        parent_path = os.path.dirname(script_path) # tools
-        grand_parent_dir = os.path.dirname(parent_path) # agent_4_agent
-        grand_grand_parent_dir = os.path.dirname(grand_parent_dir) # A4A
-        env_path = os.path.join(grand_parent_dir, ".env") # agent_4_agent/.env
-        agent_dir = os.path.join(grand_grand_parent_dir, agent_name) # A4A/agent_name
+        script_path = os.path.abspath(__file__)
+        parent_path = os.path.dirname(script_path)
+        grand_parent_dir = os.path.dirname(parent_path)  # agent_4_agent
+        env_path = os.path.join(grand_parent_dir, ".env")  # agent_4_agent/.env
+        agent_dir = os.path.join(str(_OUTPUT_ROOT), agent_name)
         # エージェントディレクトリを作成
         os.makedirs(agent_dir, exist_ok=True) 
         # __init__.pyファイルを作成
@@ -47,10 +54,10 @@ def get_agent_file(agent_name: str, file_name: str) -> str:
     agent_name: エージェント名（英小文字+_）
     file_name: 取得するファイル名（例: agent.py）
     戻り値: ファイル内容またはエラーメッセージ
+    参照先: OUTPUT_PROJECT_ROOT（プロジェクトルート）
     """
     try:
-        # このファイルの3階層上のディレクトリを取得
-        base_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        base_path = str(_OUTPUT_ROOT)
         file_path = os.path.join(base_path, agent_name, file_name)
         
         if not os.path.isfile(file_path):
@@ -70,10 +77,10 @@ def edit_agent_file(agent_name: str, file_name: str, new_code: str) -> str:
     file_name: 編集するファイル名（例: agent.py）
     new_code: 新しいコード内容
     戻り値: 成功/失敗メッセージ
+    出力先: OUTPUT_PROJECT_ROOT（プロジェクトルート）
     """
     try:
-        # このファイルの3階層上のディレクトリを取得
-        base_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        base_path = str(_OUTPUT_ROOT)
         file_path = os.path.join(base_path, agent_name, file_name)
         
         if not os.path.isfile(file_path):

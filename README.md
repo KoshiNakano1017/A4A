@@ -134,7 +134,7 @@ $env:PORT="8000"; uv run python -m a4a.agent
 | planning_agent | 8014 | `$env:PORT="8014"; uv run python -m planning_agent.a2a_agent` |
 | planning_b_agent | 8015 | `$env:PORT="8015"; uv run python -m planning_b_agent.a2a_agent` |
 | prompt_engineer_agent | 8016 | `$env:PORT="8016"; uv run python -m prompt_engineer_agent.a2a_agent` |
-| review_agent | 8017 | `$env:PORT="8017"; uv run python -m review_agent.a2a_agent` |
+| architect_review_agent | 8017 | `$env:PORT="8017"; uv run python -m architect_review_agent.a2a_agent` |
 | security_officer_agent | 8018 | `$env:PORT="8018"; uv run python -m security_officer_agent.a2a_agent` |
 
 上記をそれぞれ別ターミナルにコピーして実行すると、各エージェントのログを分けて確認できます。ポートの並びは discovery の並び順に依存します。最新の一覧は `uv run python -m a4a.print_terminals` で確認してください。

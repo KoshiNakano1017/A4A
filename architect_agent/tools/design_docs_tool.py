@@ -14,6 +14,8 @@ _ACTIVITY_LABELS = {
     "user_manual": "ユーザーマニュアル作成中",
     "screen_definition": "画面項目定義書作成中",
     "screen_transition": "画面遷移図作成中",
+    "requirements_spec": "要求仕様作成中",
+    "requirements_definition": "要件定義書作成中",
 }
 
 # 出力先ルート: 環境変数 OUTPUT_PROJECT_ROOT が設定されていればそのパス、なければ A4A ルート
@@ -42,6 +44,8 @@ DOC_TYPE_MAP = {
     "user_manual": ("user_manual", "md"),
     "screen_definition": ("screen_item_definition", "md"),
     "screen_transition": ("screen_transition", "md"),
+    "requirements_spec": ("requirements_spec", "md"),  # PM用: 企画完了時の要求仕様
+    "requirements_definition": ("requirements_definition", "md"),  # アーキテクト用: 要件定義書
 }
 
 
@@ -56,7 +60,7 @@ def write_design_doc(doc_type: str, title: str, content: str, suffix: str = "") 
     出力先ルートは環境変数 OUTPUT_PROJECT_ROOT で変更可能（未設定時は A4A プロジェクト内）。
 
     Args:
-        doc_type: flow_diagram | er_diagram | user_manual | screen_definition | screen_transition
+        doc_type: flow_diagram | er_diagram | user_manual | screen_definition | screen_transition | requirements_spec | requirements_definition
         title: ドキュメントのタイトル（ファイル名の一部に使用）
         content: 本文（Markdown または Mermaid 等）
         suffix: （廃止）ファイル名には使用しない。後方互換のため引数は残す。
@@ -100,7 +104,7 @@ def write_design_doc(doc_type: str, title: str, content: str, suffix: str = "") 
             relative_path = str(rel).replace("\\", "/")
         except ValueError:
             relative_path = str(path)
-        detail = f"保存先: {path}。レビュー依頼時はパス「{relative_path}」を review_agent に渡してください。"
+        detail = f"保存先: {path}。レビュー依頼時はパス「{relative_path}」を architect_review_agent に渡してください。"
         if archived:
             base_msg = (
                 f"旧版を /old/{doc_type}/ フォルダにアーカイブし、最新版を正本として保存しました。{detail}"

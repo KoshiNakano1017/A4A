@@ -4,7 +4,16 @@ import time
 import os
 import signal
 import threading
+from pathlib import Path
+
+from dotenv import load_dotenv
+
 from .discovery import discover_agents
+
+# .env を読み込み（OUTPUT_PROJECT_ROOT 等）。プロジェクトルートと agent_4_agent の両方を試す
+_root = Path(__file__).resolve().parent.parent
+load_dotenv(_root / ".env")
+load_dotenv(_root / "agent_4_agent" / ".env")
 
 VERBOSE_FLAG = "--verbose"
 VERBOSE_SHORT = "-v"

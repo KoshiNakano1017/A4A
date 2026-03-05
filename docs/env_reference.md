@@ -23,7 +23,7 @@
 | **MODEL** | 各エージェントが使う LLM モデル名。 | `gemini-3-flash-preview` |
 | **PORT** | Coordinator またはサブエージェントのポート。通常は `run_all` が自動で振るため指定不要。 | 8000（Coordinator） / 8001〜（サブ） |
 | **WEB_PORT** | Web UI のポート。 | `8888` |
-| **OUTPUT_PROJECT_ROOT** | 設計成果物・生成プログラムの出力先ルート。未設定時は A4A プロジェクト内（`docs/system_dev` 等）。 | 例: `C:\Users\nakano-koshi\project` |
+| **OUTPUT_PROJECT_ROOT** | 設計成果物の参照・出力先ルート。A4Aエージェントはこのルートの `docs/system_dev` に格納されたファイルを参照して実装する。未設定時は A4A プロジェクト内。 | 例: `C:/Users/nakano-koshi/project` → `C:\Users\nakano-koshi\project\docs\system_dev` を参照 |
 
 ---
 

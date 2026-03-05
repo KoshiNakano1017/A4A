@@ -1,6 +1,13 @@
 import os
+from pathlib import Path
 from typing import Optional
+from dotenv import load_dotenv
 from google.adk.tools.function_tool import FunctionTool
+load_dotenv()
+
+# 出力先ルート: OUTPUT_PROJECT_ROOT（.env）未設定時は A4A ルート
+_A4A_ROOT = Path(__file__).resolve().parent.parent.parent
+_OUTPUT_ROOT = Path(os.environ.get("OUTPUT_PROJECT_ROOT", _A4A_ROOT))
 
 # カスタムツール作成用のツール
 def create_custom_tool(
@@ -40,16 +47,14 @@ def get_animal_location_map(location_name: str) -> str:
         create_custom_tool("get_animal_location_map", tool_code, "okinawa_agent")
     """
     try:
-        # このファイルのパスを取得
-        script_path = os.path.abspath(__file__)  # tools/edit_tool.py
+        script_path = os.path.abspath(__file__)
         parent_path = os.path.dirname(script_path)  # tools
         grand_parent_dir = os.path.dirname(parent_path)  # agent_4_agent
-        grand_grand_parent_dir = os.path.dirname(grand_parent_dir)  # A4A
-        
+
         # ツールファイルを作成するディレクトリを決定
         if agent_name:
-            # 特定のエージェント用のツールとして作成
-            tools_dir = os.path.join(grand_grand_parent_dir, agent_name, "tools")
+            # 特定のエージェント用: OUTPUT_PROJECT_ROOT/agent_name/tools
+            tools_dir = os.path.join(str(_OUTPUT_ROOT), agent_name, "tools")
         else:
             # agent_4_agentのtoolsディレクトリに作成
             tools_dir = parent_path
@@ -113,15 +118,11 @@ def list_custom_tools(agent_name: Optional[str] = None) -> str:
         ツール一覧
     """
     try:
-        # このファイルのパスを取得
         script_path = os.path.abspath(__file__)
         parent_path = os.path.dirname(script_path)
-        grand_parent_dir = os.path.dirname(parent_path)
-        grand_grand_parent_dir = os.path.dirname(grand_parent_dir)
         
-        # ツールディレクトリを決定
         if agent_name:
-            tools_dir = os.path.join(grand_grand_parent_dir, agent_name, "tools")
+            tools_dir = os.path.join(str(_OUTPUT_ROOT), agent_name, "tools")
         else:
             tools_dir = parent_path
         
@@ -156,15 +157,11 @@ def get_custom_tool(tool_name: str, agent_name: Optional[str] = None) -> str:
         ツールのコード内容またはエラーメッセージ
     """
     try:
-        # このファイルのパスを取得
         script_path = os.path.abspath(__file__)
         parent_path = os.path.dirname(script_path)
-        grand_parent_dir = os.path.dirname(parent_path)
-        grand_grand_parent_dir = os.path.dirname(grand_parent_dir)
         
-        # ツールディレクトリを決定
         if agent_name:
-            tools_dir = os.path.join(grand_grand_parent_dir, agent_name, "tools")
+            tools_dir = os.path.join(str(_OUTPUT_ROOT), agent_name, "tools")
         else:
             tools_dir = parent_path
         
@@ -199,15 +196,11 @@ def edit_custom_tool(
         成功/失敗メッセージ
     """
     try:
-        # このファイルのパスを取得
         script_path = os.path.abspath(__file__)
         parent_path = os.path.dirname(script_path)
-        grand_parent_dir = os.path.dirname(parent_path)
-        grand_grand_parent_dir = os.path.dirname(grand_parent_dir)
         
-        # ツールディレクトリを決定
         if agent_name:
-            tools_dir = os.path.join(grand_grand_parent_dir, agent_name, "tools")
+            tools_dir = os.path.join(str(_OUTPUT_ROOT), agent_name, "tools")
         else:
             tools_dir = parent_path
         
@@ -247,15 +240,11 @@ def delete_custom_tool(tool_name: str, agent_name: Optional[str] = None) -> str:
         成功/失敗メッセージ
     """
     try:
-        # このファイルのパスを取得
         script_path = os.path.abspath(__file__)
         parent_path = os.path.dirname(script_path)
-        grand_parent_dir = os.path.dirname(parent_path)
-        grand_grand_parent_dir = os.path.dirname(grand_parent_dir)
         
-        # ツールディレクトリを決定
         if agent_name:
-            tools_dir = os.path.join(grand_grand_parent_dir, agent_name, "tools")
+            tools_dir = os.path.join(str(_OUTPUT_ROOT), agent_name, "tools")
         else:
             tools_dir = parent_path
         
