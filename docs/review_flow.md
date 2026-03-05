@@ -10,10 +10,10 @@
    architect_agent または engineer_agent が設計書・コードを作成し、保存先パス（例: `docs/system_dev/er_diagram_xxx.md`）を Coordinator に報告する。
 
 2. **自動レビュー依頼**  
-   Coordinator がその**パス**を review_agent に渡してレビューを依頼する（例:「以下のファイルをレビューしてください。パス: docs/system_dev/er_diagram_xxx.md」）。
+   Coordinator がその**パス**を architect_review_agent に渡してレビューを依頼する（例:「以下のファイルをレビューしてください。パス: docs/system_dev/er_diagram_xxx.md」）。
 
 3. **レビュー実行**  
-   review_agent が **read_file_for_review** ツールで該当ファイルの内容を読み取り、機密・型・脆弱性・動作などの観点でレビューする。フォーマットを崩さずにファイルを参照できる。
+   architect_review_agent が **read_file_for_review** ツールで該当ファイルの内容を読み取り、機密・型・脆弱性・動作などの観点でレビューする。フォーマットを崩さずにファイルを参照できる。
 
 4. **ユーザー確認**  
    レビュー結果（要約・指摘一覧・重要度・推奨アクション）をユーザーに提示する。
@@ -23,7 +23,7 @@
 
 ---
 
-## 2. review_agent のツール
+## 2. architect_review_agent のツール
 
 | ツール | 説明 |
 |--------|------|
@@ -37,7 +37,7 @@
 
 ## 3. Coordinator の役割
 
-- architect_agent / engineer_agent から**保存先パス**の報告を受けたら、そのパスを review_agent に渡してレビューを依頼する。  
+- architect_agent / engineer_agent から**保存先パス**の報告を受けたら、そのパスを architect_review_agent に渡してレビューを依頼する。  
 - レビュー結果をユーザーに提示し、確認してもらう。  
 - レビュー対応が必要な場合、作成者エージェントにレビュー内容を伝えて修正を依頼する。
 

@@ -1,5 +1,20 @@
 from google.adk.tools import FunctionTool
 import os
+from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# 出力先ルート: OUTPUT_PROJECT_ROOT（.env）未設定時は A4A ルート
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+_OUTPUT_ROOT = Path(os.environ.get("OUTPUT_PROJECT_ROOT", str(_REPO_ROOT))).resolve()
+
+
+def _safe_rel_path(p: str) -> str:
+    p = p.strip().replace("\\", "/")
+    if not p or p.startswith("/") or ".." in p.split("/"):
+        raise ValueError(f"不正なパスです: {p}")
+    return p
 
 # ファイル作成用のカスタムツール
 def create_agent_files(agent_name: str, agent_code: str) -> str:
@@ -7,35 +22,35 @@ def create_agent_files(agent_name: str, agent_code: str) -> str:
     agent_name: エージェント名（英小文字+_）
     agent_code: エージェントのPythonコード
     戻り値: 成功/失敗メッセージ
+    出力先: OUTPUT_PROJECT_ROOT（プロジェクトルート）
     """
     try:
-        script_path = os.path.abspath(__file__) # tools/edit_agent.py
-        parent_path = os.path.dirname(script_path) # tools
-        grand_parent_dir = os.path.dirname(parent_path) # agent_4_agent
-        grand_grand_parent_dir = os.path.dirname(grand_parent_dir) # A4A
-        env_path = os.path.join(grand_parent_dir, ".env") # agent_4_agent/.env
-        agent_dir = os.path.join(grand_grand_parent_dir, "agents", agent_name) # A4A/agents/agent_name
+        _safe_rel_path(agent_name)
+        env_path = _REPO_ROOT / "src" / "agent_4_agent" / ".env"
+        agent_dir = _OUTPUT_ROOT / "agents" / agent_name
         # エージェントディレクトリを作成
-        os.makedirs(agent_dir, exist_ok=True) 
+        agent_dir.mkdir(parents=True, exist_ok=True)
         # __init__.pyファイルを作成
-        with open(os.path.join(agent_dir, "__init__.py"), "w") as f:
-            f.write("from .agent import root_agent\n")
-            f.write('__all__ = ["root_agent"]\n')
+        (agent_dir / "__init__.py").write_text(
+            "from .agent import root_agent\n__all__ = [\"root_agent\"]\n",
+            encoding="utf-8",
+        )
         # a2a_agent.pyファイルを作成
-        with open(os.path.join(agent_dir, "a2a_agent.py"), "w") as f:
-            f.write("from . import root_agent\n")
-            f.write("\n")
-            f.write("if __name__ == \"__main__\":\n")
-            f.write("    from a4a.agent_activity import run_a2a_with_activity\n")
-            f.write("    run_a2a_with_activity(root_agent)\n")
+        (agent_dir / "a2a_agent.py").write_text(
+            "from . import root_agent\n\n"
+            "if __name__ == \"__main__\":\n"
+            "    from a4a_lab.agent_activity import run_a2a_with_activity\n"
+            "    run_a2a_with_activity(root_agent)\n",
+            encoding="utf-8",
+        )
         # agent.pyファイルを作成
-        with open(os.path.join(agent_dir, "agent.py"), "w") as f:
-            f.write(agent_code)
-        # 実行ファイルの階層にある.envファイルをコピーしてここに配置
-        with open(env_path, "r") as f_src:
-            env_content = f_src.read()
-        with open(os.path.join(agent_dir, ".env"), "w") as f_dst:
-            f_dst.write(env_content)
+        (agent_dir / "agent.py").write_text(agent_code, encoding="utf-8")
+
+        # 実行ファイルの階層にある.envファイルをコピーしてここに配置（なければ空で作成）
+        env_content = ""
+        if env_path.is_file():
+            env_content = env_path.read_text(encoding="utf-8", errors="replace")
+        (agent_dir / ".env").write_text(env_content, encoding="utf-8")
 
         return f"成功: {agent_name} を作成しました ({agent_dir})"
     except Exception as e:
@@ -47,19 +62,15 @@ def get_agent_file(agent_name: str, file_name: str) -> str:
     agent_name: エージェント名（英小文字+_）
     file_name: 取得するファイル名（例: agent.py）
     戻り値: ファイル内容またはエラーメッセージ
+    参照先: OUTPUT_PROJECT_ROOT（プロジェクトルート）
     """
     try:
-        # このファイルの3階層上のディレクトリを取得
-        base_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        file_path = os.path.join(base_path, "agents", agent_name, file_name)
-
-        if not os.path.isfile(file_path):
+        _safe_rel_path(agent_name)
+        _safe_rel_path(file_name)
+        file_path = _OUTPUT_ROOT / "agents" / agent_name / file_name
+        if not file_path.is_file():
             return f"エラー: ファイルが存在しません ({file_path})"
-
-        with open(file_path, "r") as f:
-            content = f.read()
-        
-        return content
+        return file_path.read_text(encoding="utf-8", errors="replace")
     except Exception as e:
         return f"エラー: {str(e)}"
 
@@ -70,18 +81,15 @@ def edit_agent_file(agent_name: str, file_name: str, new_code: str) -> str:
     file_name: 編集するファイル名（例: agent.py）
     new_code: 新しいコード内容
     戻り値: 成功/失敗メッセージ
+    出力先: OUTPUT_PROJECT_ROOT（プロジェクトルート）
     """
     try:
-        # このファイルの3階層上のディレクトリを取得
-        base_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        file_path = os.path.join(base_path, "agents", agent_name, file_name)
-
-        if not os.path.isfile(file_path):
+        _safe_rel_path(agent_name)
+        _safe_rel_path(file_name)
+        file_path = _OUTPUT_ROOT / "agents" / agent_name / file_name
+        if not file_path.is_file():
             return f"エラー: ファイルが存在しません ({file_path})"
-
-        with open(file_path, "w") as f:
-            f.write(new_code)
-        
+        file_path.write_text(new_code, encoding="utf-8")
         return f"成功: {file_name} を更新しました ({file_path})"
     except Exception as e:
         return f"エラー: {str(e)}"

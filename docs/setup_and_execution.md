@@ -9,7 +9,14 @@ source .venv/bin/activate
 cp src/agent_4_agent/.env.example src/agent_4_agent/.env
 ```
 
-.envファイルにGEMINI_API_KEYを設定してください
+.envファイルにGEMINI_API_KEYを設定してください。
+
+**設計書の参照先を変更する場合**（例: `C:\Users\nakano-koshi\project\docs\system_dev` を使う）:
+`agent_4_agent/.env` またはプロジェクトルートの `.env` に以下を追加してください。
+```
+OUTPUT_PROJECT_ROOT=C:/Users/nakano-koshi/project
+```
+これにより、architect_agent・architect_review_agent・engineer_agent は `docs/system_dev` をそのパス配下で読み書き・参照します。
 
 GEMINI_API_KEYは、以下から取得できます。
 

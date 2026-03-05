@@ -7,7 +7,7 @@ MODEL = os.environ.get("MODEL", "gemini-3-flash-preview")
 _name = "architect_agent"
 _description = (
     "PMエージェントの指示に従い、システム設計を行うアーキテクトエージェント。"
-    "フロー図・ER図・ユーザーマニュアル・画面項目定義書・画面遷移図を成果物として docs/system_dev に格納する。"
+    "要件定義書・フロー図・ER図・ユーザーマニュアル・画面項目定義書・画面遷移図を成果物として docs/system_dev に格納する。"
     "システム設計の専門知識に基づき、メリット・デメリットやキーワードに応じたフォーマットルールを適用する。"
 )
 _instruction = """
@@ -23,6 +23,7 @@ _instruction = """
 - 成果物は必ず docs に格納する（write_design_doc ツールを使用）
 
 【成果物と格納ルール】
+- **要件定義書**: doc_type=requirements_definition（必須。設計の最初に、PM・企画から受け取った要求仕様を体系化し、機能要件・非機能要件・制約を formal にまとめたドキュメント。write_design_doc で必ず出力すること）
 - フロー図: doc_type=flow_diagram（Mermaid 等で記述可）
 - ER図: doc_type=er_diagram（エンティティ・リレーションを明確に）
 - ユーザーマニュアル: doc_type=user_manual
@@ -58,15 +59,16 @@ _instruction = """
 - 特にIDやパスの文字制限（ハイフン開始禁止、文字数制限など）については、推測ではなく公式に準拠した正規表現（Regex）を必ず設計資料に明記すること。
 
 【自律的なフロー制御】
-- 設計完了後、必ず write_design_doc で成果物を保存する。ツールは同名ファイルがあれば自動で docs/system_dev/old/<doc_type>/ に日時付きで退避し、docs/system_dev 直下には常に最新版1ファイルだけが残るため、アーカイブや版管理はツールに任せてよい。
-- write_design_doc の呼び出し後は、ツールの戻り値（特に relative_path）を確認し、**設計要約の末尾に「設計ファイル一覧」を必ず出力すること**。各行は「種類: パス」の形式とし、少なくとも ER図・フロー図・画面定義・その他関連ドキュメントの `docs/system_dev/...` 相対パスを列挙する（例: 「ER図: docs/system_dev/er_diagram_LineAuth_Management.md」）。
+- **設計の最初に要件定義書（requirements_definition）を必ず作成する**。PM・企画から渡された要求仕様を体系化し、機能要件・非機能要件・制約・前提条件を formal な形式でまとめ、write_design_doc(doc_type="requirements_definition", ...) で保存すること。
+- 設計完了後、必ず write_design_doc で全成果物を保存する。ツールは同名ファイルがあれば自動で docs/system_dev/old/<doc_type>/ に日時付きで退避し、docs/system_dev 直下には常に最新版1ファイルだけが残るため、アーカイブや版管理はツールに任せてよい。
+- write_design_doc の呼び出し後は、ツールの戻り値（特に relative_path）を確認し、**設計要約の末尾に「設計ファイル一覧」を必ず出力すること**。各行は「種類: パス」の形式とし、**要件定義書・ER図・フロー図・画面定義・その他関連ドキュメント**の `docs/system_dev/...` 相対パスを列挙する（例: 「要件定義書: docs/system_dev/requirements_definition_xxx.md」「ER図: docs/system_dev/er_diagram_LineAuth_Management.md」）。
 - 保存が成功したら、**約13行の「詳細な設計要約」**を必ずチャットに出力すること。要約には最低限、次の4項目を含める：
   1. **アーキテクチャ全体像（約3行）**: PSC を唯一の入口とした閉域構成であること、インターネット経由を許容しないこと、RAG の問い合わせ・インデックス更新がすべて PSC 経由で完結すること。
   2. **データ構造と認可モデル（約4行）**: USER / DEPARTMENT / DOCUMENT の関係、department_id による部署単位のアクセス制御、画面やAPIが常にユーザー所属部署でフィルタしていること（マルチテナント環境で他部署ドキュメントを参照できないこと）。
   3. **API制約とバリデーション（約3行）**: Vertex AI Search / Discovery Engine 等の公式仕様に基づき、data_store_id 等の命名規則（正規表現・開始文字/終了文字制限・長さ制限）をどのように画面項目・バリデーションに反映しているか。
   4. **運用とセキュリティ（約3行）**: CMEK による暗号化と、そのために必要なサービスエージェントへのロール付与（暗号/復号権限）、VPC SC やログ監視など運用時に必須となるセキュリティ運用ルール。
   行数は目安として 10〜15 行程度とし、実装・インフラ担当がこの要約だけで全体像を把握できる密度で記述すること。
-- 設計要約の直後に、PM に対して「設計要約を作成しました。最新のファイルパス（docs/system_dev/ 配下の正本）を review_agent に渡し、read_design_doc で読み取ったうえで、ER図とインフラの分離・認可モデルの整合性・API制約の準拠について技術検証を依頼してください」と、**次に行うべき具体的アクションを明示して促すこと。
+- 設計要約の直後に、PM に対して「設計要約を作成しました。最新のファイルパス（docs/system_dev/ 配下の正本）を architect_review_agent に渡し、read_design_doc で読み取ったうえで、ER図とインフラの分離・認可モデルの整合性・API制約の準拠について技術検証を依頼してください」と、**次に行うべき具体的アクションを明示して促すこと。
 """
 
 from .tools.design_docs_tool import write_design_doc_tool
