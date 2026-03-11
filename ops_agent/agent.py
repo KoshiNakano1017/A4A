@@ -9,7 +9,6 @@ from .subagents import (
     investigation_validation_agent,
     investigation_review_validation_agent,
     architect_agent,
-    ops_prompt_engineer_agent,
     architect_review_agent,
 )
 from architect_agent.tools.design_docs_tool import write_design_doc_tool
@@ -52,7 +51,20 @@ _instruction = """
 
 【設計〜レビューの自律ループ（要求仕様確定後）】
 - 要求仕様が docs/system_dev に格納されたら、そのパスを architect_agent に渡して設計を依頼する。
-- architect_agent から「詳細な設計要約」と「設計ファイル一覧（docs/system_dev/... のパス群）」を受け取ったら、そのパスを使って architect_review_agent にレビューを依頼する。依頼メッセージには、対象ファイルごとに「パス: docs/system_dev/xxx.md」を明示し、read_design_doc で読み取って ER図とインフラの分離・認可モデルの整合性・API制約の準拠を検証するよう指示する。
+- architect_agent から「詳細な設計要約」と「設計ファイル一覧（docs/system_dev/... のパス群）」を受け取ったら、**ゲート（正本の一意性チェック）**を行う：
+  - docs/system_dev 直下の正本は doc_type ごとに **1ファイルのみ**であること（同種が複数ある場合は差し戻し）
+  - `docs/system_dev/old/` 配下は正本ではないため、レビュー対象に含めない
+  - 同種ドキュメントが複数提示された場合は、architect_agent に「固定ファイル名の正本に統合して再出力」を依頼する
+  - **必須設計書が揃っていること**（欠落があれば差し戻し）:
+    - requirements_definition / flow_diagram / er_diagram / screen_definition
+    - api_spec / authz_design / persistence_design / vertex_ai_search_config / rag_generation_spec / ops_design
+  - **内容ゲート（DoD欠落の差し戻し）**：必須設計書が揃っていても、内容が「骨格だけ」だと下流が推測実装になるため差し戻す。
+    - api_spec: 共通エラー形式（JSON）/ ステータスコード表 / Req+Resの例 / 制限値 / ページングorストリーミング / 冪等性 が存在すること
+    - vertex_ai_search_config: filter式の例（department_id+category）/ 取り込み手順 / 削除手順 / 再実行（失敗時）方針 が存在すること
+    - rag_generation_spec: `/api/ask` のResponse契約（JSON例）/ citationの形 / 根拠不足時の返し方 が存在すること
+    - ops_design: SLO（p95測定区間）/ アラート条件 / ログ項目 / PIIマスク（失敗時）/ CMEK運用 が存在すること
+  - 上記「内容ゲート」は、あなた単独で本文を読めない場合でも必ず実施する：`architect_review_agent` に **プリフライト**として「read_design_doc で各設計書を読み、上の必須セクションが存在するか（TBDでも可、空欄不可）を確認し、欠落があれば判定: 要修正で返す」よう依頼する。
+  ゲートを通過したパスのみを使って architect_review_agent にレビューを依頼する。依頼メッセージには、対象ファイルごとに「パス: docs/system_dev/xxx.md」を明示し、read_design_doc で読み取って ER図とインフラの分離・認可モデルの整合性・API制約の準拠を検証するよう指示する。
 - architect_review_agent からレビュー結果を受け取ったら、判定が「判定: 要修正」の場合は、指摘内容を要約し、該当する設計ファイルとともに architect_agent に送り「レビュー指摘を反映した設計の改訂」を依頼する。その後、architect_agent が write_design_doc で設計を更新し、新しい設計ファイル一覧を出したら、再度 architect_review_agent に同じパス（または更新後のパス）でレビューを依頼する（必要に応じて複数回繰り返してよい）。
 - 判定が「判定: Go」の場合は、設計要約とレビュー結果（主要な確認ポイントと問題なしであった点）、レビュー中に行った主な修正内容を統合し、**ユーザー向けの最終設計レポート**として報告する。その際、「この時点の設計が下流工程（agent_4_agent チーム）に渡すべき正本である」ことを明示し、次ステップ（実装・テスト・デプロイ）への移行提案を行う。
 
@@ -72,7 +84,6 @@ root_agent = Agent(
     sub_agents=[
         planning_phase_agents,
         architect_agent,
-        ops_prompt_engineer_agent,
         architect_review_agent,
     ],
     tools=[write_design_doc_tool],

@@ -1,12 +1,10 @@
 """他エージェントが作成した資料・コードをレビュー用に読み込むツール。"""
-import os
 from pathlib import Path
 
 from google.adk.tools.function_tool import FunctionTool
 
-# プロジェクトルート（architect の成果物と同じ基準）。環境変数で上書き可能
-_ROOT = Path(__file__).resolve().parent.parent.parent
-_PROJECT_ROOT = Path(os.environ.get("OUTPUT_PROJECT_ROOT", os.environ.get("PROJECT_ROOT", _ROOT)))
+# プロジェクトルート（docs/ の親）
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
 
 def _path_under_root(target: Path, root: Path) -> bool:
@@ -21,12 +19,11 @@ def _path_under_root(target: Path, root: Path) -> bool:
 def read_file_for_review(file_path: str) -> dict:
     """プロジェクト内のファイルを読み取り、レビュー用に内容を返す。
 
-    他エージェント（architect_agent, engineer_agent 等）が作成した
-    設計書・コードのパスが渡されたときに使用する。
+    設計書（docs/system_dev/）やソース（src/）など、プロジェクト配下のファイルを読む。
 
     Args:
-        file_path: プロジェクトルートからの相対パス（例: docs/system_dev/er_diagram_xxx.md）、
-                   またはプロジェクトルート以下の絶対パス（例: C:\\...\\A4A\\docs\\system_dev\\xxx.md）。
+        file_path: プロジェクトルートからの相対パス（例: docs/system_dev/er_diagram_xxx.md, src/main.py）、
+                   または絶対パス（プロジェクト内に限る）。
 
     Returns:
         success, path, content（成功時）または success, error（失敗時）
@@ -34,7 +31,6 @@ def read_file_for_review(file_path: str) -> dict:
     try:
         base = _PROJECT_ROOT.resolve()
         path_input = file_path.strip().replace("\\", "/")
-        # 絶対パスで渡された場合: プロジェクトルート以下ならそのまま使用
         if path_input.startswith("/") or (len(path_input) >= 2 and path_input[1] == ":"):
             target = Path(file_path).resolve()
             if not _path_under_root(target, base):
@@ -43,7 +39,6 @@ def read_file_for_review(file_path: str) -> dict:
                     "error": f"パスがプロジェクト外を指しています: {file_path}",
                 }
         else:
-            # 相対パス
             target = (base / path_input.lstrip("/")).resolve()
             if not _path_under_root(target, base):
                 return {

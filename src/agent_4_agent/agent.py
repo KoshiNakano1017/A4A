@@ -23,7 +23,7 @@ docs/system_dev/ の設計書に沿ったプログラム作成の要件を明確
 
 【INPUT / OUTPUT】
 - INPUT: docs/system_dev/ 配下の正本（設計書）。creator_agent に設計書パスを渡し、read_design_doc で読み取ってから作成させる。
-- OUTPUT: 成果物はプロジェクトルート（OUTPUT_PROJECT_ROOT、.env で定義）に出力する。
+- OUTPUT: 成果物はプロジェクトルート配下に出力する。
 
 【手順】
 1. ユーザーの要望を確認する（どの設計書に基づくプログラムか、追加要件等）
@@ -89,6 +89,6 @@ pm_agent = Agent(
 
 root_agent = SequentialAgent(
     name="agent_4_agent",
-    description="設計書（docs/system_dev）をINPUTにプログラムを作成し、OUTPUT_PROJECT_ROOTに出力。",
+    description="設計書（docs/system_dev）をINPUTにプログラムを作成し、プロジェクト配下に出力。",
     sub_agents=[pm_agent],
 )

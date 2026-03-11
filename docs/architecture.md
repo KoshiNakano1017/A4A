@@ -164,7 +164,7 @@ project/
 ## OPS エージェントと配下チーム
 
 **ops_agent** は運用保守・DevOps と上流工程の PM 機能を兼ねる「司令塔」エージェントです。  
-要件確定までの流れを調整し、以下の 6 つの専門チームを束ねます。
+要件確定までの流れを調整し、以下の 5 つの専門チームを束ねます。
 
 ### ops_agent（運用保守エージェント）
 
@@ -183,7 +183,6 @@ project/
 | **planning_b_agent** | 企画 B。planning_agent の提案に否定的な立場で検証し、リスク・代替案を提示する。 |
 | **investigation_agent** | 調査。企画・設計の前提が一次情報（公式ドキュメント等）に基づいているか検証する。 |
 | **architect_agent** | アーキテクト。ER 図・フロー図・画面定義などを `docs/system_dev` に格納する。 |
-| **ops_prompt_engineer_agent** | プロンプト最適化。上流工程のシステムプロンプト・レポート雛形を統一・改善する。 |
 | **review_agent** | レビュー。設計書を読み、ER 図とインフラの分離・認可モデル・API 制約を検証し、Go/要修正を判定する。 |
 
 ### 上流工程の流れ
@@ -191,9 +190,8 @@ project/
 1. **planning_agent** と **planning_b_agent** が企画案・候補機能を整理・検証
 2. **investigation_agent** が一次情報に基づく検証を実施
 3. **architect_agent** がシステム構成・データ構造・認可モデル・画面定義を設計
-4. **ops_prompt_engineer_agent** がプロンプト・テンプレートを最適化
-5. **review_agent** が設計をレビューし、Go/要修正を判定
-6. 判定が Go のとき、ops_agent が最終設計レポートをまとめ、下流工程（engineer_agent 等）へ引き渡し
+4. **review_agent** が設計をレビューし、Go/要修正を判定
+5. 判定が Go のとき、ops_agent が最終設計レポートをまとめ、下流工程（engineer_agent 等）へ引き渡し
 
 ---
 

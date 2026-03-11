@@ -16,16 +16,19 @@ flowchart LR
             Search[Vertex AI Search]
             Embed[Embedding API]
         end
-        PSC[Pipeline / Store / Connector]
+        DataPipeline[Pipeline / Store / Connector]
         GCS[Cloud Storage]
     end
 
     User --> App
     App -->|検索クエリ + department_id フィルタ| Search
-    App -->|認可チェック| PSC
-    PSC --> GCS
-    Search -->|メタデータ・チャンク参照| PSC
+    App -->|認可チェック| DataPipeline
+    DataPipeline --> GCS
+    Search -->|メタデータ・チャンク参照| DataPipeline
 ```
+
+## 用語
+- **PSC**: Private Service Connect（Google Cloud 内でマネージドサービスへ閉域接続する仕組み）
 
 ## フロー概要
 

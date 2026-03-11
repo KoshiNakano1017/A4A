@@ -1,56 +1,57 @@
-# ER図: RAG アプリケーション データモデル
+# ER図：RAG Application Data Model
 
-唯一の正本。データベースの物理/論理テーブルおよびエンティティのみを対象とする。
+## 用語定義
+- **PSC**: Private Service Connect。
 
-## エンティティとリレーション
-
+## ER図 (Mermaid)
 ```mermaid
 erDiagram
-    DEPARTMENT ||--o{ DOCUMENT_METADATA : "閲覧可能"
-    DOCUMENT_METADATA }o--|| BLOB_STORAGE : "実体参照"
+    DEPARTMENT ||--o{ USER : "belongs_to"
+    DEPARTMENT ||--o{ DOCUMENT : "owns"
+    USER ||--o{ SEARCH_HISTORY : "performs"
+    DOCUMENT ||--o{ CITATION : "referenced_in"
+    SEARCH_HISTORY ||--o{ CITATION : "includes"
+
+    USER {
+        string uid PK "Firebase UID"
+        string email
+        string department_id FK
+        string role "USER, DEPT_ADMIN, SYS_ADMIN"
+        timestamp created_at
+    }
 
     DEPARTMENT {
-        string department_id PK
-        string name
-        string description
+        string department_id PK "Unique Dept ID"
+        string department_name
+        string data_store_id "Vertex AI Search Data Store ID (Mapping to GCP Infra)"
     }
 
-    DOCUMENT_METADATA {
-        string document_id PK
-        string department_id FK "閲覧を許可する部署（1ドキュメント1部署）"
-        string blob_path
+    DOCUMENT {
+        string document_id PK "Unique Doc ID"
         string title
-        datetime created_at
-        datetime updated_at
+        string gcs_uri
+        string department_id FK
+        string category "guideline, manual, etc."
+        string status "INDEXING, ACTIVE, ERROR"
+        timestamp uploaded_at
     }
 
-    BLOB_STORAGE {
-        string blob_path PK
-        string content_type
-        long size
+    SEARCH_HISTORY {
+        string search_id PK
+        string uid FK
+        string query
+        string answer
+        timestamp timestamp
+    }
+
+    CITATION {
+        string citation_id PK
+        string search_id FK
+        string document_id FK
+        string snippet
     }
 ```
 
-## 認可（Authorization）
-
-### 概念
-
-- **どの部署（Department）がどのドキュメントを閲覧可能か** を、`DOCUMENT_METADATA.department_id` で表現する。
-- 1ドキュメントは1部署に紐づく（多対多が必要な場合は中間テーブルで拡張すること）。
-
-### 検索時のフィルタリングとアプリ側ロジック
-
-- **検索時**: Vertex AI Search 等で検索する際、**ログインユーザの所属部署（department_id）** をコンテキストに渡し、アプリケーション層で `DOCUMENT_METADATA.department_id = ユーザの所属部署` となるメタデータのみを対象に検索する（または Search API のフィルタ条件に `department_id` を指定する）。
-- **アプリ側の責務**:
-  - ユーザ認証から「所属部署」を取得する。
-  - 検索クエリ実行前に、必ず `department_id` によるフィルタを付与する。
-  - 一覧・ダウンロード・プレビューなど、ドキュメントにアクセスする全てのAPIで、同一の認可ルール（当該部署に紐づくドキュメントのみ）を適用する。
-- **データ層**: `DOCUMENT_METADATA.department_id` は「このドキュメントを閲覧可能な部署」のキーとして保持し、インデックス・フィルタ可能にしておく。
-
-### まとめ
-
-| 項目 | 内容 |
-|------|------|
-| 認可の表現 | `DOCUMENT_METADATA.department_id` ↔ `DEPARTMENT.department_id` |
-| 検索時の制御 | クエリ/フィルタに `department_id` を付与し、所属部署のドキュメントのみ取得 |
-| アプリ連動 | 認証結果の所属部署を全検索・一覧・取得APIに渡し、一貫してフィルタ適用 |
+## 補足事項
+- **`data_store_id` について**: `DEPARTMENT` テーブルに保持している `data_store_id` は、部署ごとの Vertex AI Search リソース（データストア）を特定するためのインフラ連携用 ID です。
+- **インフラ分離**: 物理的なリソース配置（VPC SC / PSC）と、論理的なデータ分離（Firestore / Vertex AI Search Data Store）の紐付けに利用されます。詳細なマッピング方針はフロー図を参照してください。

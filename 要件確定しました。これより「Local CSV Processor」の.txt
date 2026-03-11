@@ -218,7 +218,7 @@ ER図（設定モデル） (er_diagram_Local_CSV_Processor_Config_Model.md)
 要求仕様書（Python要件） (requirements_spec_Local_CSV_Processor_Python_Requirements.md)
 画面項目定義書（GUI定義） (screen_item_definition_Local_CSV_Processor_GUI_Definition.md)
 概要: ExcelやYAML形式の設定ファイルに基づき、ローカルのCSV/TSVファイルを読み込み、加工・変換・フィルタリングを行うPythonアプリケーション（GUI版）です。セキュリティと保守性に配慮し、外部通信を行わない設計となっています。
-生成ファイル（OUTPUT_PROJECT_ROOT 配下）
+生成ファイル（プロジェクト配下）
 requirements.txt: 依存ライブラリの定義（バージョン固定済）
 src/main.py: アプリケーションの起動用エントリーポイント
 src/gui/app.py: TkinterによるGUI実装（進捗表示・キャンセル機能・安全なログ表示）

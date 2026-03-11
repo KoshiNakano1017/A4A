@@ -22,7 +22,7 @@ def create_agent_files(agent_name: str, agent_code: str) -> str:
     agent_name: エージェント名（英小文字+_）
     agent_code: エージェントのPythonコード
     戻り値: 成功/失敗メッセージ
-    出力先: OUTPUT_PROJECT_ROOT（プロジェクトルート）
+    出力先: プロジェクトルート
     """
     try:
         _safe_rel_path(agent_name)
@@ -62,7 +62,7 @@ def get_agent_file(agent_name: str, file_name: str) -> str:
     agent_name: エージェント名（英小文字+_）
     file_name: 取得するファイル名（例: agent.py）
     戻り値: ファイル内容またはエラーメッセージ
-    参照先: OUTPUT_PROJECT_ROOT（プロジェクトルート）
+    参照先: プロジェクトルート
     """
     try:
         _safe_rel_path(agent_name)
@@ -81,7 +81,7 @@ def edit_agent_file(agent_name: str, file_name: str, new_code: str) -> str:
     file_name: 編集するファイル名（例: agent.py）
     new_code: 新しいコード内容
     戻り値: 成功/失敗メッセージ
-    出力先: OUTPUT_PROJECT_ROOT（プロジェクトルート）
+    出力先: プロジェクトルート
     """
     try:
         _safe_rel_path(agent_name)

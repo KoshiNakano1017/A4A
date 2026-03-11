@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "doc_types": {
+    "requirements_definition": {
+      "canonical_title": "Vertex_AI_PSC_RAG_Requirements",
+      "file_name": "requirements_definition_Vertex_AI_PSC_RAG_Requirements.md"
+    },
+    "er_diagram": {
+      "canonical_title": "RAG_Application_Data_Model",
+      "file_name": "er_diagram_RAG_Application_Data_Model.md"
+    },
+    "flow_diagram": {
+      "canonical_title": "Vertex_AI_PSC_RAG_Flow_Architecture",
+      "file_name": "flow_diagram_Vertex_AI_PSC_RAG_Flow_Architecture.md"
+    },
+    "screen_definition": {
+      "canonical_title": "Search_Management_UI_Definition",
+      "file_name": "screen_item_definition_Search_Management_UI_Definition.md"
+    },
+    "api_spec": {
+      "canonical_title": "Vertex_AI_PSC_RAG_API_Specification",
+      "file_name": "api_spec_Vertex_AI_PSC_RAG_API_Specification.md"
+    },
+    "authz_design": {
+      "canonical_title": "Vertex_AI_PSC_RAG_Authz_Design",
+      "file_name": "authz_design_Vertex_AI_PSC_RAG_Authz_Design.md"
+    },
+    "persistence_design": {
+      "canonical_title": "Vertex_AI_PSC_RAG_Persistence_Design",
+      "file_name": "persistence_design_Vertex_AI_PSC_RAG_Persistence_Design.md"
+    },
+    "ops_design": {
+      "canonical_title": "Vertex_AI_PSC_RAG_Ops_Design",
+      "file_name": "ops_design_Vertex_AI_PSC_RAG_Ops_Design.md"
+    },
+    "vertex_ai_search_config": {
+      "canonical_title": "Vertex_AI_PSC_RAG_Config",
+      "file_name": "vertex_ai_search_config_Vertex_AI_PSC_RAG_Config.md"
+    },
+    "rag_generation_spec": {
+      "canonical_title": "Vertex_AI_PSC_RAG_Generation_Spec",
+      "file_name": "rag_generation_spec_Vertex_AI_PSC_RAG_Generation_Spec.md"
+    },
+    "screen_transition": {
+      "canonical_title": "Vertex_AI_PSC_RAG_Screen_Transition",
+      "file_name": "screen_transition_Vertex_AI_PSC_RAG_Screen_Transition.md"
+    },
+    "user_manual": {
+      "canonical_title": "Vertex_AI_PSC_RAG_User_Manual",
+      "file_name": "user_manual_Vertex_AI_PSC_RAG_User_Manual.md"
+    }
+  },
+  "updated_at": "2026-03-10T11:15:47"
+}

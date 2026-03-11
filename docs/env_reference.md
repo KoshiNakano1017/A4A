@@ -23,7 +23,6 @@
 | **MODEL** | 各エージェントが使う LLM モデル名。 | `gemini-3-flash-preview` |
 | **PORT** | Coordinator またはサブエージェントのポート。通常は `run_all` が自動で振るため指定不要。 | 8000（Coordinator） / 8001〜（サブ） |
 | **WEB_PORT** | Web UI のポート。 | `8888` |
-| **OUTPUT_PROJECT_ROOT** | 設計成果物の参照・出力先ルート。A4Aエージェントはこのルートの `docs/system_dev` に格納されたファイルを参照して実装する。未設定時は A4A プロジェクト内。 | 例: `C:/Users/nakano-koshi/project` → `C:\Users\nakano-koshi\project\docs\system_dev` を参照 |
 
 ---
 
@@ -66,3 +65,4 @@ MODEL=gemini-3-flash-preview
 
 - `.env` は git にコミットしないでください（機密情報を含むため）。`.gitignore` に含めることを推奨。
 - プロジェクトルートに `.env` があれば、多くのエージェントが `load_dotenv()` で読み込みます。`agent_4_agent/.env` だけにある場合は、そのディレクトリから実行する処理のみが参照します。
+- **設計書・ソースの出力先**: 設計書は `docs/system_dev/`、ソースはプロジェクトルート直下の相対パス（例: `src/main.py`）に固定で保存されます。
